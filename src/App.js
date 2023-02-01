@@ -10,7 +10,6 @@ const GlobalStyle = createGlobalStyle`
     margin: 0;
     box-sizing: border-box;
     font-family: "Inter", sans-serif;
-  
   }
 `;
 const CardsContainer = styled.div`
@@ -21,6 +20,8 @@ const CardsContainer = styled.div`
 function App() {
   const [pesquisa, setPesquisa] = useState("");
   const [idFilter, setIdFilter] = useState("");
+  const [typeFilter, setTypeFilter] = useState("");
+  const [ordena, setOrdena] = useState("");
 
   return (
     <>
@@ -30,13 +31,48 @@ function App() {
         setIdFilter={setIdFilter}
         pesquisa={pesquisa}
         setPesquisa={setPesquisa}
+        typeFilter={typeFilter}
+        setTypeFilter={setTypeFilter}
+        ordena={ordena}
+        setOrdena={setOrdena}
       />
       <CardsContainer>
-        {pokemons.filter((pokemon) => {
-          return idFilter ? pokemon.id.includes(idFilter) : pokemon
-        })
+        {pokemons
           .filter((pokemon) => {
-            return pokemon.name.english.toLowerCase().includes(pesquisa.toLowerCase());
+            return idFilter ? pokemon.id.includes(idFilter) : pokemon;
+          })
+          .sort((a, b) => {
+            const pokemonAtual = a.name.english;
+            const pokemonProximo = b.name.english;
+            if (ordena === "crescente") {
+              return pokemonAtual > pokemonProximo ? 1 : -1;
+              // if (a.name.english < b.name.english) {
+              //   return -1;
+              // } else if (a.name.english > b.name.english) {
+              //   return 1;
+              // } else {
+              //   return 0;
+              // }
+            } else if (ordena === "decrescente") {
+              return pokemonAtual < pokemonProximo ? 1 : -1;
+              // if (a.name.english > b.name.english) {
+              //   return -1;
+              // } else if (a.name.english < b.name.english) {
+              //   return 1;
+              // } else {
+              //   return 0;
+              // }
+            } else {
+              return a.id - b.id;
+            }
+          })
+          .filter((pokemon) => {
+            return pokemon.name.english
+              .toLowerCase()
+              .includes(pesquisa.toLowerCase());
+          })
+          .filter((pokemon) => {
+            return typeFilter ? pokemon.type.includes(typeFilter) : pokemon;
           })
           .map((pokemon) => {
             return (
